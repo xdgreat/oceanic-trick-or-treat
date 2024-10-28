@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import db, { initializeDatabase } from "@/app/libs/db";
 
 initializeDatabase();
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Increment the trick count in the database
     db.prepare('UPDATE counts SET trick_count = trick_count + 1 WHERE id = 1').run();
