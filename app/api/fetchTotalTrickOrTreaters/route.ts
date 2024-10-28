@@ -10,7 +10,7 @@ type resultType ={
 
 export async function GET() {
   try {
-    const result:resultType = db.prepare("SELECT trick_count, treat_count FROM counts WHERE id = 1").get();
+    const result = db.prepare("SELECT trick_count, treat_count FROM counts WHERE id = 1").get() as resultType;
     
     if (result) {
       const totalTrickOrTreaters = result.trick_count + result.treat_count;
