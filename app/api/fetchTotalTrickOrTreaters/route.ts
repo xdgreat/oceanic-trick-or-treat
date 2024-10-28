@@ -1,10 +1,10 @@
 // app/api/fetchTotalTrickOrTreaters/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import db, { initializeDatabase } from "@/app/libs/db";
 
 initializeDatabase(); 
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const result:any = db.prepare("SELECT trick_count, treat_count FROM counts WHERE id = 1").get();
     

@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import db, { initializeDatabase } from "@/app/libs/db";
 import { promises as fs } from 'fs';
 import path from 'path';
 
 initializeDatabase();
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Define the path to the JSON file
     const jokesFilePath = path.join(process.cwd(), 'public', 'halloween_jokes.json');
