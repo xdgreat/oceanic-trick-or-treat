@@ -13,7 +13,6 @@ const client = new MongoClient(uri, {
   },
 });
 
-console.log(process.env.MONGODB_CONNECTION)
 export async function connectDB() {
   const client = MongoClient(uri);
 
