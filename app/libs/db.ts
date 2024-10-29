@@ -1,22 +1,47 @@
-import Database  from 'better-sqlite3';
-import { join } from 'path';
+import { ServerApiVersion } from "mongodb";
+let MongoClient = require("mongodb").MongoClient;
+import dotenv from "dotenv";
+dotenv.config({ path: ".env" });
 
-const dbPath = join(process.cwd(), 'database.sqlite');
-const db = new Database(dbPath);
+const uri = process.env.MONGODB_CONNECTION;
 
-export const initializeDatabase = () => {
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS counts (
-      id INTEGER PRIMARY KEY,
-      trick_count INTEGER DEFAULT 0,
-      treat_count INTEGER DEFAULT 0
-    );
-  `);
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
 
-  const countExists = db.prepare('SELECT * FROM counts WHERE id = 1').get();
-  if (!countExists) {
-    db.prepare('INSERT INTO counts (trick_count, treat_count) VALUES (0, 0)').run();
+console.log(process.env.MONGODB_CONNECTION)
+export async function connectDB() {
+  const client = MongoClient(uri);
+
+  try {
+    await client.connect();
+    console.log("Connected to MongoDB");
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
   }
-};
+}
 
-export default db;
+export function getDB() {
+  return client.db("OceanicTrickOrTreat");
+}
+
+export async function closeDB() {
+  await client.close();
+  console.log("MongoDB connection closed");
+}
+
+export async function run() {
+  try {
+    await client.connect();
+    client.db("OceanicTrickOrTreat");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
+  } finally {
+    await client.close();
+  }
+}

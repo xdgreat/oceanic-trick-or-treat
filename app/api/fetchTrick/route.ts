@@ -1,22 +1,41 @@
+import { closeDB, getDB } from "@/app/libs/db";
 import { NextResponse } from "next/server";
-import db, { initializeDatabase } from "@/app/libs/db";
-
-initializeDatabase();
 
 export async function GET() {
   try {
-    // Increment the trick count in the database
-    db.prepare('UPDATE counts SET trick_count = trick_count + 1 WHERE id = 1').run();
+    const db = await getDB();
+    const countsCollection = db.collection("count");
+    const result = (await countsCollection.findOne({})) as {
+      totalCount: { treatCount: number; trickCount: number };
+    };
+    const updateResult = await countsCollection.updateOne(
+      {},
+      { $inc: { "totalCount.trickCount": 1 } }
+    );
 
-    // Respond with a success message
-    return NextResponse.json({
-      message: "Trick count incremented successfully!",
-      ok: true,
-    }, { status: 200 });
+    console.log(
+      updateResult.modifiedCount > 0 && updateResult.acknowledged === true
+    );
+
+    if ( updateResult.modifiedCount > 0 && updateResult.acknowledged === true) {
+      return NextResponse.json(
+        {
+          message: "Trick count incremented successfully!",
+          ok: true,
+        },
+        { status: 200 }
+      );
+    } else {
+      return NextResponse.json(
+        { error: "Trick count could not be incremented" },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.log(error);
-    return NextResponse.json({
-      error: "An error occurred while incrementing the trick count",
-    }, { status: 500 });
+    console.error("Error incrementing trick count:", error);
+    return NextResponse.json(
+      { error: "An error occurred while incrementing the trick count" },
+      { status: 500 }
+    );
   }
 }
