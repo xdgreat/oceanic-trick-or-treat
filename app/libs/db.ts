@@ -1,5 +1,5 @@
 import { ServerApiVersion } from "mongodb";
-let MongoClient = require("mongodb").MongoClient;
+const MongoClient = require("mongodb").MongoClient;
 import dotenv from "dotenv";
 dotenv.config({ path: ".env" });
 
